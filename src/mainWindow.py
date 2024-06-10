@@ -149,37 +149,15 @@ class MainWindow(QMainWindow):
     def onMousePressed(self, event):
 
         self.mousePressed = True
-        self.camController.setEnabled(False)
+        # self.camController.setEnabled(False)
 
     def onMouseReleased(self, event):
         self.mousePressed = False
-        self.camController.setEnabled(True)
+        # self.camController.setEnabled(True)
 
     def onMouseMoved(self, event: QMouseEvent):
 
-        self.entitySelectionWidgetsBlockSignals(True)
-        # Get the current camera position and rotation
-        camera = self.view.camera()
-        camera_position = camera.position()
-        camera_rotation = camera.rotation()
 
-        # Calculate the delta movement
-        delta_x = event.x() - self.prev_mouse_x
-        delta_y = event.y() - self.prev_mouse_y
-
-        # Update the camera position
-        camera_position.setX(camera_position.x() - delta_x * 0.01)
-        camera_position.setZ(camera_position.z() - delta_y * 0.01)
-
-        # Set the new camera position and rotation
-        camera.setPosition(camera_position)
-        camera.setRotation(camera_rotation)
-
-        # Store the current mouse position
-        self.prev_mouse_x = event.x()
-        self.prev_mouse_y = event.y()
-
-        # Don't propagate the event to other handlers
         event.accept()
 
 
