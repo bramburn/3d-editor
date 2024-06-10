@@ -25,23 +25,8 @@ To launch, run `python main.py` in the root directory.
 | Support Hierarchy | Support hierarchy. a.k.a support nested object. <br> (This would require supporting parent child relationships like such ``sphereB = Qt3DCore.QEntity(boxA)`` and having the UI handle the display through a tree-like structure in the widget list and allowing the user to select a parent when editing the object.) | Not Started |
 | Custom Shader | Have custom shader(s) to mimic shading in Solidworks (edge outlines) | Not Started |
 
-## Structure
-
-The project has the following structure:
-```plaintext
-.
-├── src
-│   ├── command.py          # Track commands for undo/redo
-│   ├── constants.py        # Constants like scale factor
-│   ├── editWindow.py       # UI for the editing of objects
-│   ├── entityObject.py     # Define an object class
-│   ├── mainWindow.py       # UI for rendering the main window - 3D frame and edit window and list interface
-│   └── userInterface.py    # UI for where user interactions take place, adding/deleting objects, etc.
-├── stl
-│   ├── car.stl             # Test STL file
-│   └── test.stl            # Test STL file
-└── entities.json           # Local storage of saved entities
-```
+## Known Issues
+- Errors when clicking the object and moving it around.
 
 ## Resources
 
@@ -52,3 +37,5 @@ The following resources were used in the development of this application:
 - [YouTube Video Tutorial](https://www.youtube.com/watch?v=dpj2dZQA63c)
 
 Huge thanks to Copilot for the generation of Docstrings/comments. 
+
+** Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)**

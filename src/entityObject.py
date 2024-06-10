@@ -145,8 +145,7 @@ class Entity3D:
                 entity.mesh.setSource(QUrl.fromLocalFile(data['source']))
             else:
                 # Show an error message and skip loading the entity
-                print(
-                    f"Error: STL file {data['source']} does not exist. Skipping entity {data['name']}.")
+                print(f"Error: STL file {data['source']} does not exist. Skipping entity {data['name']}.")
                 return None
         entity.updateProperties(data)
         return entity

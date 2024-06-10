@@ -1,6 +1,6 @@
 import json
-from PySide6.QtCore import Qt, QUrl
-from PySide6.QtGui import QQuaternion, QVector3D, QColor
+from PySide6.QtCore import Qt, QUrl, QPoint
+from PySide6.QtGui import QQuaternion, QVector3D, QColor, QMouseEvent
 from PySide6.Qt3DCore import Qt3DCore
 from PySide6.Qt3DExtras import Qt3DExtras
 from PySide6.QtWidgets import (QMainWindow, QWidget, QHBoxLayout, QVBoxLayout,
@@ -119,8 +119,11 @@ class MainWindow(QMainWindow):
         self.entities = self.load_data('entities.json')
 
         # Store the previous mouse position
-        self.previousMousePosition = QVector3D()
+        self.previousMousePosition = QPoint()
         self.mousePressed = False
+
+        self.prev_mouse_x = 0
+        self.prev_mouse_y = 0
 
         # Store the selected entity
         self.selectedEntity = None
@@ -144,39 +147,41 @@ class MainWindow(QMainWindow):
                 self.uiWidget.addToList(entity)
 
     def onMousePressed(self, event):
+
         self.mousePressed = True
         self.camController.setEnabled(False)
-        self.previousMousePosition = event.worldIntersection()
-        self.initialZ = self.previousMousePosition.z()
 
     def onMouseReleased(self, event):
         self.mousePressed = False
         self.camController.setEnabled(True)
 
-    def onMouseMoved(self, event):
-        """ When I keep swinging the mouse around, the object gets smaller and smaller. Why? """
-        # Get the world position of the mouse click
-        world_position = event.worldIntersection()
+    def onMouseMoved(self, event: QMouseEvent):
 
-        if self.mousePressed:
-            # If an entity is selected, calculate the new position of the entity
-            if self.selectedEntity is not None:
-                # Calculate the difference between the current and previous mouse positions
-                difference = QVector3D(world_position.x() - self.previousMousePosition.x(),
-                                       world_position.y() - self.previousMousePosition.y(),
-                                       world_position.z() - self.previousMousePosition.z()) 
+        self.entitySelectionWidgetsBlockSignals(True)
+        # Get the current camera position and rotation
+        camera = self.view.camera()
+        camera_position = camera.position()
+        camera_rotation = camera.rotation()
 
-                # Apply the difference to the entity's position
-                new_position = self.selectedEntity.transform.translation() + difference
+        # Calculate the delta movement
+        delta_x = event.x() - self.prev_mouse_x
+        delta_y = event.y() - self.prev_mouse_y
 
-                # Clamp the z position to [-10, 10]
-                # new_position.setZ(max(min(new_position.z(), 10), -10))
-                self.selectedEntity.transform.setTranslation(new_position)
+        # Update the camera position
+        camera_position.setX(camera_position.x() - delta_x * 0.01)
+        camera_position.setZ(camera_position.z() - delta_y * 0.01)
 
-                self.editWindow.loadEntity(self.selectedEntity)
+        # Set the new camera position and rotation
+        camera.setPosition(camera_position)
+        camera.setRotation(camera_rotation)
 
-            # Update the previous mouse position
-            self.previousMousePosition = world_position
+        # Store the current mouse position
+        self.prev_mouse_x = event.x()
+        self.prev_mouse_y = event.y()
+
+        # Don't propagate the event to other handlers
+        event.accept()
+
 
     def updateCameraPosition(self):
         # Update the camera position label
@@ -208,7 +213,10 @@ class MainWindow(QMainWindow):
 
         # For camera controls
         self.camController = Qt3DExtras.QOrbitCameraController(self.rootEntity)
-        self.camController.setLinearSpeed(90)
+        self.camController.setInverseXTranslate(True)
+        self.camController.setInverseYTranslate(True)
+
+        self.camController.setLinearSpeed(10)
         self.camController.setLookSpeed(180)
         self.camController.setCamera(self.view.camera())
 
