@@ -59,16 +59,17 @@ class Entity3D:
 
         # Create a QObjectPicker and attach it to the entity
         self.picker = Qt3DRender.QObjectPicker(self.entity)
+        # todo: have the ability to select one of multiple items in the raycast
         self.entity.addComponent(self.picker)
 
         # Connect the clicked signal to a slot
         self.picker.clicked.connect(self.onClicked)
 
         # Connect mouse movements to the mainWindow
-        self.picker.pressed.connect(self.mainWindow.onMousePressed)
-        self.picker.released.connect(self.mainWindow.onMouseReleased)
+        # self.picker.pressed.connect(self.mainWindow.onMousePressed)
+        # self.picker.released.connect(self.mainWindow.onMouseReleased)
         self.picker.setDragEnabled(True)
-        self.picker.moved.connect(self.mainWindow.onMouseMoved)
+        # self.picker.moved.connect(self.mainWindow.onMouseMoved)
 
     def onClicked(self, event):
         self.mainWindow.onEntityClicked(self)
